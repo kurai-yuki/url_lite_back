@@ -15,8 +15,9 @@ export class BaseRepository<T> {
     return this.database(this.tableName).select();
   }
 
-  async getById(id: string): Promise<T[]> {
-    return this.database(this.tableName).select().where('id', id);
+  async getById(id: string): Promise<T | undefined> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return this.database(this.tableName).select().where('id', id).first();
   }
 
   async create(data: Partial<T>): Promise<void> {

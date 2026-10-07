@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from '@/configs/database/base-repository.service';
+import { BaseRepository } from '@/configs/database/base-repository';
 import { USER_TABLE } from '@/configs/database/database-constants';
 import { User } from '@/entities/user';
 

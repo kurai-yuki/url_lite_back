@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
-import { resolve } from 'path';
+import path from 'path';
 
-config({ path: resolve(process.cwd(), '.env') });
+config({ path: path.join(__dirname, '../../.env') });
 
 export class EnvConfigService {
   static get(name: string): string | undefined {
