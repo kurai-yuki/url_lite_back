@@ -2,10 +2,10 @@ import type { Knex } from 'knex';
 import { EnvConfigService } from '../env-config.service';
 import { Logger } from '@nestjs/common';
 
-const configs: Knex.Config = {
+const knexConfig: Knex.Config = {
   client: 'postgresql',
   connection: EnvConfigService.get('DATABASE_URL'),
-  debug: false, // if you need to debug
+  debug: false,
   useNullAsDefault: true,
   log: {
     debug: (message) => Logger.debug(message, 'Knex-log'),
@@ -28,4 +28,4 @@ const configs: Knex.Config = {
   },
 };
 
-export default configs;
+export default knexConfig;
