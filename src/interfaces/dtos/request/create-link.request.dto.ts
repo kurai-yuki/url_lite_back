@@ -7,4 +7,9 @@ export class CreateLinkRequestDto {
   @IsNotEmpty()
   @Expose()
   longLink: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  username: string;
 }

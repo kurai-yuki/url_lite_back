@@ -20,9 +20,8 @@ export class UserService {
     return user;
   }
 
-  async createUser(username: string): Promise<void> {
-    const alredyExists = await this.getUserByUsername(username);
-
+  async createUser(username: string): Promise<User> {
+    const alredyExists = await this.userRepository.getUserByUsername(username);
     if (alredyExists) {
       throw new ConflictException('User with this username alredy exists!');
     }
@@ -30,5 +29,7 @@ export class UserService {
     await this.userRepository.create({
       username,
     });
+
+    return this.getUserByUsername(username);
   }
 }

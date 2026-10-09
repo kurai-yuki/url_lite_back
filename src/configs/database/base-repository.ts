@@ -15,7 +15,7 @@ export class BaseRepository<T> {
     return this.database(this.tableName).select();
   }
 
-  async getById(id: string): Promise<T | undefined> {
+  async getById(id: string | number): Promise<T | undefined> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.database(this.tableName).select().where('id', id).first();
   }
@@ -24,11 +24,11 @@ export class BaseRepository<T> {
     return this.database(this.tableName).insert(data);
   }
 
-  async update(id: string, data: Partial<T>): Promise<number> {
+  async update(id: string | number, data: Partial<T>): Promise<number> {
     return this.database(this.tableName).update(data).where('id', id);
   }
 
-  async delete(id: string): Promise<number> {
+  async delete(id: string | number): Promise<number> {
     return this.database(this.tableName).delete().where('id', id);
   }
 }

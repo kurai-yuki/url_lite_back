@@ -3,27 +3,55 @@ import { LinkRepository } from '@/link/link.repository';
 import { generateRandomLinkId } from '../../utils';
 import { EnvConfigService } from '@/configs/env-config.service';
 import { CreateShortLinkResponseDto } from '@/dtos/response/create-short-link.response.dto';
-import { getLinkByIdResponseDto } from '@/dtos/response/get-link-by-id.response.dto';
+import { UserLinkService } from '@/user-link/user-link.service';
+import { CreateLinkRequestDto } from '@/dtos/request/create-link.request.dto';
+import { LinkDto } from '@/dtos/link.dto';
+import { GetUserLinksByUsernameResponseDto } from '@/dtos/response/get-user-links-by-username.response.dto';
+import { UserService } from '@/user/user.service';
 
 @Injectable()
 export class LinkService {
-  constructor(private linkRepository: LinkRepository) {}
+  constructor(
+    private linkRepository: LinkRepository,
+    private userService: UserService,
+    private userLinkService: UserLinkService,
+  ) {}
 
-  async getLinkById(id: string): Promise<getLinkByIdResponseDto> {
+  async getLinkById(id: string): Promise<LinkDto> {
     const link = await this.linkRepository.getById(id);
 
     if (!link) {
       throw new NotFoundException('Link with this id not found!');
     }
 
-    const { id: linkId, original_link } = link;
+    const { id: linkId, original_link, short_link } = link;
     return {
       id: linkId,
       originalLink: original_link,
+      shortLink: short_link,
     };
   }
 
-  async createShortLink(longLink: string): Promise<CreateShortLinkResponseDto> {
+  async getUserLinksByUsername(
+    username: string,
+  ): Promise<GetUserLinksByUsernameResponseDto[]> {
+    const user = await this.userService.getUserByUsername(username);
+
+    const userLinks = await this.userLinkService.getUserLinksByUserId(user.id);
+    const linkIds = userLinks.map((userLink) => userLink.linkId);
+
+    const links = await this.linkRepository.getLinksByBatch(linkIds);
+
+    return links.map((link) => ({
+      id: link.id,
+      originalLink: link.original_link,
+      shortLink: link.short_link,
+    }));
+  }
+
+  async createShortLink(
+    payload: CreateLinkRequestDto,
+  ): Promise<CreateShortLinkResponseDto> {
     let id = generateRandomLinkId();
 
     while (true) {
@@ -35,17 +63,27 @@ export class LinkService {
 
       id = generateRandomLinkId();
     }
+    const baseUrl = EnvConfigService.get('FRONT_URL');
 
     await this.linkRepository.create({
       id,
-      original_link: longLink,
+      original_link: payload.longLink,
+      short_link: `${baseUrl}/${id}`,
     });
 
-    const baseUrl = EnvConfigService.get('FRONT_URL');
+    await this.userLinkService.createUserLink({
+      linkId: id,
+      username: payload.username,
+    });
 
     return {
-      originalLink: longLink,
+      id,
+      originalLink: payload.longLink,
       shortLink: `${baseUrl}/${id}`,
     };
+  }
+
+  async deleteLinkById(id: string): Promise<void> {
+    await this.linkRepository.delete(id);
   }
 }

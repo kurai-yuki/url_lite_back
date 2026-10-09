@@ -6,4 +6,8 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class LinkRepository extends BaseRepository<Link> {
   protected tableName: string = LINK_TABLE;
+
+  async getLinksByBatch(ids: string[]): Promise<Link[]> {
+    return this.database(this.tableName).whereIn('id', ids);
+  }
 }
