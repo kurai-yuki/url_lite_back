@@ -1,9 +1,11 @@
+import knexConfig from '@/configs/database/knexfile';
+import { LinkModule } from '@/link/link.module';
+import { UserLinkModule } from '@/user-link/user-link.module';
+import { UserModule } from '@/user/user.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { KnexModule } from 'nest-knexjs';
-import knexConfig from '@/configs/database/knexfile';
-import { MainModule } from './modules/main.module';
 
 @Module({
   imports: [
@@ -22,7 +24,9 @@ import { MainModule } from './modules/main.module';
         },
       ],
     }),
-    MainModule,
+    UserModule,
+    LinkModule,
+    UserLinkModule,
   ],
 })
 export class AppModule {}
