@@ -21,7 +21,9 @@ export class LinkService {
     const link = await this.linkRepository.getById(id);
 
     if (!link) {
-      throw new NotFoundException('Link with this id not found!');
+      throw new NotFoundException('Link não encontrado!', {
+        description: 'Link with this id not found!',
+      });
     }
 
     const { id: linkId, original_link, short_link } = link;
