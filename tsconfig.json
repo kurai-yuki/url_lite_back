@@ -25,7 +25,8 @@
       "@/*": ["./src/modules/*"],
       "@/configs/*": ["./src/configs/*"],
       "@/dtos/*": ["./src/interfaces/dtos/*"],
-      "@/entities/*": ["./src/interfaces/entities/*"]
+      "@/entities/*": ["./src/interfaces/entities/*"],
+      "@/utils/*": ["./src/utils/*"]
     }
   }
 }
