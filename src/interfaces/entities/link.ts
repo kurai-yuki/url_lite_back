@@ -1,5 +1,7 @@
 export interface Link {
   id: string;
-  original_link: string;
-  short_link: string;
+  originalLink: string;
+  shortLink: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }

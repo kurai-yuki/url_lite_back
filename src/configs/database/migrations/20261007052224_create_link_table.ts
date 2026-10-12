@@ -6,6 +6,8 @@ export async function up(knex: Knex): Promise<void> {
     table.string('id').notNullable().unique();
     table.string('original_link').notNullable();
     table.string('short_link').notNullable();
+    table.timestamp('createdAt').defaultTo(knex.fn.now()).notNullable();
+    table.timestamp('updatedAt').nullable();
   });
 }
 

@@ -16,8 +16,8 @@ export class UserLinkService {
 
     return userLinks.map((userLink) => ({
       id: userLink.id,
-      userId: userLink.user_id,
-      linkId: userLink.link_id,
+      userId: userLink.userId,
+      linkId: userLink.linkId,
     }));
   }
 
@@ -25,8 +25,8 @@ export class UserLinkService {
     const { id } = await this.userService.getUserByUsername(payload.username);
 
     await this.userLinkRepository.create({
-      user_id: id,
-      link_id: payload.linkId,
+      userId: id,
+      linkId: payload.linkId,
     });
   }
 }

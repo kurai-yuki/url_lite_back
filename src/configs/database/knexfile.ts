@@ -1,6 +1,10 @@
 import type { Knex } from 'knex';
 import { EnvConfigService } from '../env-config.service';
 import { Logger } from '@nestjs/common';
+import {
+  convertToCamelCase,
+  convertToSnakeCase,
+} from '../../utils/case-converter';
 
 const knexConfig: Knex.Config = {
   client: 'postgresql',
@@ -25,6 +29,19 @@ const knexConfig: Knex.Config = {
     tableName: 'knex_migrations',
     directory: './migrations',
     extension: 'ts',
+  },
+  wrapIdentifier(value: string, origImpl) {
+    return origImpl(convertToSnakeCase(value));
+  },
+  postProcessResponse(result: unknown) {
+    if (!result) return;
+
+    const isArray = Array.isArray(result);
+    if (isArray) {
+      return result.map((row: object) => convertToCamelCase(row));
+    }
+
+    return convertToCamelCase(result);
   },
 };
 

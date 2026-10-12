@@ -26,11 +26,12 @@ export class LinkService {
       });
     }
 
-    const { id: linkId, original_link, short_link } = link;
+    const { id: linkId, originalLink, shortLink } = link;
+
     return {
       id: linkId,
-      originalLink: original_link,
-      shortLink: short_link,
+      originalLink,
+      shortLink,
     };
   }
 
@@ -46,8 +47,8 @@ export class LinkService {
 
     return links.map((link) => ({
       id: link.id,
-      originalLink: link.original_link,
-      shortLink: link.short_link,
+      originalLink: link.originalLink,
+      shortLink: link.shortLink,
     }));
   }
 
@@ -69,8 +70,8 @@ export class LinkService {
 
     await this.linkRepository.create({
       id,
-      original_link: payload.longLink,
-      short_link: `${baseUrl}/${id}`,
+      originalLink: payload.longLink,
+      shortLink: `${baseUrl}/${id}`,
     });
 
     await this.userLinkService.createUserLink({
