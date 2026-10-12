@@ -14,7 +14,9 @@ export class UserService {
     const user = await this.userRepository.getUserByUsername(username);
 
     if (!user) {
-      throw new NotFoundException('User with this username not found!');
+      throw new NotFoundException('Usuário não encontrando!', {
+        description: 'User with this username not found.',
+      });
     }
 
     return user;
@@ -23,7 +25,9 @@ export class UserService {
   async createUser(username: string): Promise<User> {
     const alredyExists = await this.userRepository.getUserByUsername(username);
     if (alredyExists) {
-      throw new ConflictException('User with this username alredy exists!');
+      throw new ConflictException('Usuário com esse nome já existe!', {
+        description: 'User with this username alredy exists!',
+      });
     }
 
     await this.userRepository.create({
