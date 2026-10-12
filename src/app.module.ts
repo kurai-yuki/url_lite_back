@@ -1,10 +1,11 @@
+import knexConfig from '@/configs/database/knexfile';
+import { LinkModule } from '@/link/link.module';
+import { UserLinkModule } from '@/user-link/user-link.module';
+import { UserModule } from '@/user/user.module';
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { KnexModule } from 'nest-knexjs';
-import configs from './configs/database/knexfile';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import configs from './configs/database/knexfile';
       isGlobal: true,
     }),
     KnexModule.forRoot({
-      config: configs,
+      config: knexConfig,
       retryAttempts: 3,
     }),
     ThrottlerModule.forRoot({
@@ -23,8 +24,9 @@ import configs from './configs/database/knexfile';
         },
       ],
     }),
+    UserModule,
+    LinkModule,
+    UserLinkModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

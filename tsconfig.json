@@ -19,6 +19,14 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@/*": ["./src/modules/*"],
+      "@/configs/*": ["./src/configs/*"],
+      "@/dtos/*": ["./src/interfaces/dtos/*"],
+      "@/entities/*": ["./src/interfaces/entities/*"],
+      "@/utils/*": ["./src/utils/*"]
+    }
   }
 }
