@@ -24,9 +24,8 @@
     "paths": {
       "@/*": ["./src/modules/*"],
       "@/configs/*": ["./src/configs/*"],
-      "@/dtos/*": ["./src/interfaces/dtos/*"],
-      "@/entities/*": ["./src/interfaces/entities/*"],
-      "@/utils/*": ["./src/utils/*"]
+      "@/dtos/*": ["./src/models/dtos/*"],
+      "@/entities/*": ["./src/models/entities/*"],
     }
   }
 }

@@ -5,8 +5,8 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable(USER_TABLE, (table) => {
     table.increments('id').notNullable();
     table.string('username').notNullable().unique();
-    table.timestamp('createdAt').defaultTo(knex.fn.now()).notNullable();
-    table.timestamp('updatedAt').nullable();
+    table.timestamp('created_at').defaultTo(knex.fn.now()).notNullable();
+    table.timestamp('updated_at').nullable();
   });
 }
 

@@ -1,23 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { LinkRepository } from '@/link/link.repository';
-import { generateRandomLinkId } from '../../utils';
 import { EnvConfigService } from '@/configs/env-config.service';
-import { CreateShortLinkResponseDto } from '@/dtos/response/create-short-link.response.dto';
-import { UserLinkService } from '@/user-link/user-link.service';
 import { CreateLinkRequestDto } from '@/dtos/request/create-link.request.dto';
-import { LinkDto } from '@/dtos/link.dto';
-import { GetUserLinksByUsernameResponseDto } from '@/dtos/response/get-user-links-by-username.response.dto';
 import { UserService } from '@/user/user.service';
+import { plainToInstance } from 'class-transformer';
+import { LinkResponseDto } from '@/dtos/response/link.response.dto';
+import { GetLinksByFilterRequestDto } from '@/dtos/request/get-links-by-filter.request.dto';
+import { generateRandomLinkId } from '../../utils';
 
 @Injectable()
 export class LinkService {
   constructor(
     private linkRepository: LinkRepository,
     private userService: UserService,
-    private userLinkService: UserLinkService,
   ) {}
 
-  async getLinkById(id: string): Promise<LinkDto> {
+  async filter(
+    payload: GetLinksByFilterRequestDto,
+  ): Promise<LinkResponseDto[]> {
+    const links = await this.linkRepository.filter(payload);
+
+    return plainToInstance(LinkResponseDto, links);
+  }
+
+  async getLinkById(id: string): Promise<LinkResponseDto> {
     const link = await this.linkRepository.getById(id);
 
     if (!link) {
@@ -26,36 +36,15 @@ export class LinkService {
       });
     }
 
-    const { id: linkId, originalLink, shortLink } = link;
-
-    return {
-      id: linkId,
-      originalLink,
-      shortLink,
-    };
-  }
-
-  async getUserLinksByUsername(
-    username: string,
-  ): Promise<GetUserLinksByUsernameResponseDto[]> {
-    const user = await this.userService.getUserByUsername(username);
-
-    const userLinks = await this.userLinkService.getUserLinksByUserId(user.id);
-    const linkIds = userLinks.map((userLink) => userLink.linkId);
-
-    const links = await this.linkRepository.getLinksByBatch(linkIds);
-
-    return links.map((link) => ({
-      id: link.id,
-      originalLink: link.originalLink,
-      shortLink: link.shortLink,
-    }));
+    return plainToInstance(LinkResponseDto, link);
   }
 
   async createShortLink(
     payload: CreateLinkRequestDto,
-  ): Promise<CreateShortLinkResponseDto> {
+  ): Promise<LinkResponseDto> {
     let id = generateRandomLinkId();
+    const user = await this.userService.getUserByUsername(payload.username);
+    const baseUrl = EnvConfigService.get('FRONT_URL');
 
     while (true) {
       const alredyExists = await this.linkRepository.getById(id);
@@ -66,27 +55,26 @@ export class LinkService {
 
       id = generateRandomLinkId();
     }
-    const baseUrl = EnvConfigService.get('FRONT_URL');
 
-    await this.linkRepository.create({
+    const link = {
       id,
       originalLink: payload.longLink,
       shortLink: `${baseUrl}/${id}`,
-    });
-
-    await this.userLinkService.createUserLink({
-      linkId: id,
-      username: payload.username,
-    });
-
-    return {
-      id,
-      originalLink: payload.longLink,
-      shortLink: `${baseUrl}/${id}`,
+      createdBy: user.id,
     };
+
+    try {
+      await this.linkRepository.create(link);
+
+      return link;
+    } catch (error) {
+      throw new InternalServerErrorException('Erro ao tentar salvar link!');
+    }
   }
 
   async deleteLinkById(id: string): Promise<void> {
+    await this.getLinkById(id);
+
     await this.linkRepository.delete(id);
   }
 }

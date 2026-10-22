@@ -16,7 +16,6 @@ export class BaseRepository<T> {
   }
 
   async getById(id: string | number): Promise<T | undefined> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.database(this.tableName).select().where('id', id).first();
   }
 
