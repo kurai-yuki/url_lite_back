@@ -1,38 +1,45 @@
 import { CreateLinkRequestDto } from '@/dtos/request/create-link.request.dto';
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { LinkService } from '@/link/link.service';
-import { GetLinkByIdRequestDto } from '@/dtos/request/get-link-by-id.request.dto';
-import { CreateShortLinkResponseDto } from '@/dtos/response/create-short-link.response.dto';
-import { LinkDto } from '@/dtos/link.dto';
-import { GetUserLinksByUsernameRequestDto } from '@/dtos/request/get-user-links-by-username.request.dto';
-import { GetUserLinksByUsernameResponseDto } from '@/dtos/response/get-user-links-by-username.response.dto';
-import { DeleteLinkRequestDto } from '@/dtos/request/delete-link.request.dto';
+import { IdRequestDto } from '@/dtos/request/id.request.dto';
+import { LinkResponseDto } from '@/dtos/response/link.response.dto';
+import { GetLinksByFilterRequestDto } from '@/dtos/request/get-links-by-filter.request.dto';
 
 @Controller('link')
 export class LinkController {
   constructor(private linkService: LinkService) {}
 
-  @Get(':id')
-  async getLinkById(@Param() param: GetLinkByIdRequestDto): Promise<LinkDto> {
-    return this.linkService.getLinkById(param.id);
+  @Get()
+  async getLinksByFilter(
+    @Query() params: GetLinksByFilterRequestDto,
+  ): Promise<LinkResponseDto[]> {
+    return this.linkService.filter(params);
   }
 
-  @Get('/user/:username')
-  async getUserLinksByUsername(
-    @Param() param: GetUserLinksByUsernameRequestDto,
-  ): Promise<GetUserLinksByUsernameResponseDto[]> {
-    return this.linkService.getUserLinksByUsername(param.username);
+  @Get(':id')
+  async getLinkById(
+    @Param() param: IdRequestDto,
+  ): Promise<LinkResponseDto> {
+    return this.linkService.getLinkById(param.id);
   }
 
   @Post()
   async createShortLink(
     @Body() body: CreateLinkRequestDto,
-  ): Promise<CreateShortLinkResponseDto> {
+  ): Promise<LinkResponseDto> {
     return this.linkService.createShortLink(body);
   }
 
   @Delete(':id')
-  async deleteLink(@Param() param: DeleteLinkRequestDto): Promise<void> {
+  async deleteLink(@Param() param: IdRequestDto): Promise<void> {
     return this.linkService.deleteLinkById(param.id);
   }
 }

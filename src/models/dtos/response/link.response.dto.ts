@@ -1,7 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
-export class LinkDto {
+export class LinkResponseDto {
   @Expose()
   id: string;
 
@@ -10,4 +10,7 @@ export class LinkDto {
 
   @Expose()
   shortLink: string;
+
+  @Expose()
+  createdBy: number
 }

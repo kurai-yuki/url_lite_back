@@ -1,6 +1,5 @@
 import knexConfig from '@/configs/database/knexfile';
 import { LinkModule } from '@/link/link.module';
-import { UserLinkModule } from '@/user-link/user-link.module';
 import { UserModule } from '@/user/user.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -26,7 +25,6 @@ import { KnexModule } from 'nest-knexjs';
     }),
     UserModule,
     LinkModule,
-    UserLinkModule,
   ],
 })
 export class AppModule {}
